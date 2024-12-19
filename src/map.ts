@@ -1,12 +1,11 @@
 /**
  * 迷路の床の種類を表します。
- * - `0`: 見えない範囲
  * - `1`: 壁
  * - `2`: 動ける床
  * - `3`: スタート
  * - `4`: ゴール
  */
-type mazeFloor = 0 | 1 | 2 | 3 | 4;
+type mazeFloor = 1 | 2 | 3 | 4;
 
 /**
  * 迷路のマップのデータを表すClass
@@ -22,7 +21,7 @@ class mazeMap {
     */
     get map(): mazeFloor[][] {
         const size = this.size;
-        let map: mazeFloor[][] = Array.from({length:size[1]},()=>Array.from({length:size[0]},()=>0));
+        let map: mazeFloor[][] = Array.from({length:size[1]},()=>Array.from({length:size[0]},()=>1));
         for (let i in map) {
             for (let j in map[i]) {
                 map[i][j] = this.#map[i][j];
@@ -78,7 +77,7 @@ class mazeMap {
         return new mazeMap(
             Array.from({length:y},
                 ()=>Array.from({length:x},
-                    ()=>0
+                    ()=>1
                 )
             )
         );
@@ -105,12 +104,12 @@ class mazeMap {
             }
         }
         // 値がmazeFloorかどうか確認しながらコピーする
-        let map: mazeFloor[][] = Array.from({length:size[1]},()=>Array.from({length:size[0]},()=>0));
+        let map: mazeFloor[][] = Array.from({length:size[1]},()=>Array.from({length:size[0]},()=>1));
         let specialFloor: {start:number,goal:number} = {start:0,goal:0}
         for (let i in map_) {
             for (let j of map_[i]) {
                 const value = map_[i][j]
-                if (value==0||value==1||value==2||value==3||value==4) {
+                if (value==1||value==2||value==3||value==4) {
                     map[i][j] = value;
                     // スタートとゴールを数える
                     if (value==3) {

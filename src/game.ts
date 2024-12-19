@@ -15,13 +15,19 @@ class mazeGame {
         return this.#time;
     }
     /**
-     * プレイヤーの位置 [x,y]
+     * プレイヤーの位置 [x,y] (スタート位置からの相対位置)
      */
     get position(): [number,number] {
-        return [...this.#position];
+        return [
+            this.#position[0]-this.#map.start![0],
+            this.#position[1]-this.#map.start![1],
+        ];
     }
+    // get position(): [number,number] {
+    //     return [...this.#position];
+    // }
     get copy(): mazeGame {
-        return new mazeGame(this.#map.copy,this.time,this.position);
+        return new mazeGame(this.#map.copy,this.time,[...this.#position]);
     }
     constructor (map: mazeMap,time: number=0,position: [number,number]=map.start?map.start:[1,1]) {
         this.#map = map;
@@ -55,18 +61,23 @@ class mazeGame {
         }
         return false;
     }
+    get goal(): boolean {
+        // console.log(this.#map.map)
+        return this.#map.get(...this.#position)==4;
+    }
 }
 
+type Direction = 0|1|2|3;
 type mazeAction = {
     action: "move";
-    direction: 0|1|2|3;
+    direction: Direction;
 }
-const moveDir = {
-    0: [1,0],
-    1: [0,1],
-    2: [-1,0],
-    3: [0,-1],
-}
+const moveDir = [
+    [1,0],
+    [0,1],
+    [-1,0],
+    [0,-1],
+]
 function moveDirLookup(x:-1|0|1,y:-1|0|1) {
     if (x==0&&y==0) { return 0; }
     if (x==0&&y==1) { return 1; }
@@ -74,5 +85,12 @@ function moveDirLookup(x:-1|0|1,y:-1|0|1) {
     if (x==0&&y==-1) { return 3; }
     return false;
 }
+function flipDir(dir: Direction): Direction {
+    if (dir==0) { return 2; }
+    if (dir==1) { return 3; }
+    if (dir==2) { return 0; }
+    if (dir==3) { return 1; }
+    return 0;
+}
 
-export { mazeGame, mazeAction, moveDir,moveDirLookup };
+export { mazeGame, mazeAction, moveDir, moveDirLookup, Direction, flipDir };

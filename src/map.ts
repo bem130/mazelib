@@ -13,18 +13,18 @@ type mazeFloor = 0 | 1 | 2 | 3 | 4;
  */
 class mazeMap {
     /**
-     * 迷路を表す2D配列
+     * 迷路を表す2D配列 mazeFloor[y][x]
      */
     #map: mazeFloor[][]
     /**
      * 迷路を表す2D配列
      * @return 複製された迷路
-     */
+    */
     get map(): mazeFloor[][] {
         const size = this.size;
         let map: mazeFloor[][] = Array.from({length:size[1]},()=>Array.from({length:size[0]},()=>0));
         for (let i in map) {
-            for (let j of map[i]) {
+            for (let j in map[i]) {
                 map[i][j] = this.#map[i][j];
             }
         }
@@ -35,6 +35,26 @@ class mazeMap {
      */
     get size(): [number,number] {
         return [this.#map[0].length,this.#map.length];
+    }
+    /**
+     * 迷路のセルを取得する
+     * 迷路の範囲外では`1`(壁)を返す
+     */
+    get(x: number,y: number): mazeFloor {
+        if (x<0||y<0) { return 1 as mazeFloor; }
+        if (x>=this.size[0]||y>=this.size[1]) { return 1 as mazeFloor; }
+        return this.#map[y][x];
+    }
+    /**
+     * 迷路のセルを書き換える
+     * 迷路の範囲外ではエラー
+     * @return mazeMap(this)
+     */
+    set(x: number,y: number,value: mazeFloor): mazeMap {
+        if (x<0||y<0) { throw new Error(`[${x},${y}] is outside the maze`); }
+        if (x>=this.size[0]||y>=this.size[1]) { throw new Error(`[${x},${y}] is outside the maze`); }
+        this.#map[y][x] = value;
+        return this;
     }
     /**
      * 2次元配列を素に`mazeMap`を作る
@@ -64,7 +84,7 @@ class mazeMap {
         return new mazeMap(mazeMap.parse(str));
     }
     /**
-     * `mazeMap.stringify`で作った文字列を素に`mazeFloor[][]`を作る
+     * `mazeMap.stringify`で作った文字列を素に`mazeFloor[y][x]`を作る
      * @param str 各行をコンマで区切った文字列
      */
     static parse(str: string): mazeFloor[][] {
@@ -116,8 +136,7 @@ class mazeMap {
     }
 }
 
-const myMaze = mazeMap.fromSize([5,5]);
-console.log(myMaze.stringify());
-console.log(mazeMap.fromString(myMaze.stringify()).stringify());
+var myMaze = mazeMap.fromSize([5,5]);
+console.log(mazeMap.fromString(myMaze.set(1,1,1).stringify()).map)
 
 export { mazeMap };

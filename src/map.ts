@@ -57,6 +57,12 @@ class mazeMap {
         return this;
     }
     /**
+     * 迷路をコピーする
+     */
+    get copy(): mazeMap {
+        return new mazeMap(this.map);
+    }
+    /**
      * 2次元配列を素に`mazeMap`を作る
      * @param map - 迷路を表す2D配列
      */
@@ -64,13 +70,14 @@ class mazeMap {
         this.#map = map;
     }
     /**
-     * 迷路の大きさが`size`の0で埋められた`mazeMap`を作る
-     * @param size - [横,縦]
+     * 迷路の大きさが`x`x`y`の0で埋められた`mazeMap`を作る
+     * @param x - 迷路の横の大きさ
+     * @param x - 迷路の縦の大きさ
      */
-    static fromSize(size: [number,number]): mazeMap {
+    static fromSize(x: number,y: number): mazeMap {
         return new mazeMap(
-            Array.from({length:size[1]},
-                ()=>Array.from({length:size[0]},
+            Array.from({length:y},
+                ()=>Array.from({length:x},
                     ()=>0
                 )
             )
@@ -134,9 +141,43 @@ class mazeMap {
             .map(row => row.join(""))
             .join(",");
     }
+    /**
+     * 迷路を文字列で表します
+     */
+    toString(): string {
+        return `mazeMap [${this.size.join("x")}]\n`
+            + this.#map
+                .map(row => row.join(" "))
+                .join("\n");
+    }
+    /**
+     * 迷路のスタートの座標を取得する
+     * スタートが無ければnull
+     */
+    get start(): [number,number] | null {
+        for (let i in this.#map) {
+            for (let j in this.#map[i]) {
+                if (this.#map[i][j]==3) {
+                    return [Number(j),Number(i)];
+                }
+            }
+        }
+        return null;
+    }
+    /**
+     * 迷路のゴールの座標を取得する
+     * ゴールが無ければnull
+     */
+    get goal(): [number,number] | null {
+        for (let i in this.#map) {
+            for (let j in this.#map[i]) {
+                if (this.#map[i][j]==4) {
+                    return [Number(j),Number(i)];
+                }
+            }
+        }
+        return null;
+    }
 }
 
-var myMaze = mazeMap.fromSize([5,5]);
-console.log(mazeMap.fromString(myMaze.set(1,1,1).stringify()).map)
-
-export { mazeMap };
+export { mazeFloor, mazeMap };
